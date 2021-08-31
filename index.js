@@ -2,43 +2,39 @@
 const fs = require("fs/promises");
 const path = require("path");
 
-const readFileUsers = () => {
+const readFileUsers = async() => {
     const usersPath = path.resolve("users.json");
     //Imprimir en consola el arreglo de usuarios
-    fs.readFile(usersPath,"utf8", (err, data) => {
-        if (err) throw err;
-        let users = JSON.parse(data);
-        console.log(users);
-    });
+    try { // trycatch añadido y asyncAwait
+        const data = await fs.readFile(usersPath, "utf8");
+        console.log(data)   
+    } catch (error) {
+        console.log(error)
+    }
 };
-const writeHelloWorld = () => {
+const writeHelloWorld = async() => {
     const helloPath = path.resolve("hello.txt");
     //Escribir hello world! en el archivo hello.txt
-    fs2.writeFile(helloPath, "hello world!", (error) => {
-        if(error){
-            console.log("No se ha podido escribir en este archivo");
-        }
-    });
-
+    try {
+        await fs.writeFile(helloPath, "hello world!");
+    } catch (error) {
+        console.log(error);
+        console.log("No se ha podido escribir en este archivo");
+    }
 };
-
-const addUser = (username) => {
+const addUser = async(username) => {
     const usersPath = path.resolve("users.json");
     //Agregar un usuario en la lista users.json
-    //let data = JSON.stringify('users.json');
-    //let users = JSON.parse(data);
-    //console.log(data); // username ES el USUARIO EXTRA
-     fs.readFile(usersPath,"utf8", (err, data) => {
-        if (err) throw err;
-        console.log(data);
-        let users = JSON.parse(data);
-        console.log(users);
-    });
-
-    fs.writeFile(usersPath, `["Hector","Eduardo","Sandra","Ana","Saúl","${username}"]`, (err) => {
-        if (err) throw err;
-        console.log('Data written to file');
-    });
+     // username ES el USUARIO EXTRA
+    try {
+        //Arreglo de usuarios (JSON)
+        const data = await fs.readFile(usersPath, "utf8");
+        const users = JSON.parse(data); //Convertir de JSON a objeto
+        users.push(username);
+        await fs.writeFile(usersPath, JSON.stringify(users));
+    } catch (error) {
+        console.log(error);
+    }
 };
 
 //No hace falta ejecutar las funciones
@@ -86,3 +82,4 @@ fs2.readFile(requirementsPath, "utf8")
         console.log(error)
     }
 })();
+
